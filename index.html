@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMCiAN - Medical Student Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Parisienne&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', monospace;
+            background-color: #f3e7d7;
+            color: #5a2829;
+            overflow-x: hidden;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f3e7d7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid #5a2829;
+            border-top: 8px solid transparent;
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Header */
+        .header {
+            background-color: white;
+            padding: 20px 0;
+            text-align: left;
+            padding-left: 50px;
+        }
+
+        .logo {
+            font-family: 'Parisienne', cursive;
+            font-size: 3rem;
+            color: #5a2829;
+            animation: writeText 3s ease-in-out;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes writeText {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 50px;
+            min-height: 70vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .grid-item {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(90, 40, 41, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .grid-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(90, 40, 41, 0.2);
+        }
+
+        .grid-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 20px;
+        }
+
+        .grid-item h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        /* Dropdown for Lectures */
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 10px 25px rgba(90, 40, 41, 0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f3e7d7;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f3e7d7;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: white;
+            padding: 40px 50px;
+            text-align: center;
+        }
+
+        .footer h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .footer p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .main-content {
+                padding: 30px 20px;
+            }
+            
+            .header {
+                padding-left: 20px;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .footer {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <h1 class="logo">SMCiAN</h1>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="grid-container">
+            <!-- Books -->
+            <div class="grid-item" onclick="redirectWithLoading('https://drive.google.com/drive/folders/1Q3KsWGf77DweokXxcqng-tnv_qUFoYg8')">
+                <img src="https://i.postimg.cc/pV03q6SZ/IMG-20250526-WA0060.jpg" alt="Books">
+                <h3>Books</h3>
+            </div>
+
+            <!-- Notes -->
+            <div class="grid-item" onclick="redirectWithLoading('https://drive.google.com/drive/folders/1QTXYIVRhhEW8Zr7qcn2lWX7otn8PaF4z')">
+                <img src="https://i.postimg.cc/gjB5jxh5/IMG-20250526-WA0061.jpg" alt="Notes">
+                <h3>Notes</h3>
+            </div>
+
+            <!-- Lectures -->
+            <div class="grid-item" id="lecturesItem">
+                <img src="https://i.postimg.cc/wv2nKfj9/IMG-20250526-WA0062.jpg" alt="Lectures">
+                <h3>Lectures</h3>
+                <div class="dropdown" id="lecturesDropdown">
+                    <div class="dropdown-item" onclick="redirectWithLoading('https://youtube.com/playlist?list=PLRq8ps5AR3vOsUvfNXO_UK7g6j3g0K6KS&si=3Nw-CfNRCi9noEiw')">
+                        Histology
+                    </div>
+                    <div class="dropdown-item" onclick="redirectWithLoading('https://youtube.com/playlist?list=PLRq8ps5AR3vMdXlf4CMrl5-D6gENX0r9s&si=7j0xlVVSm_SDupMV')">
+                        Physiology
+                    </div>
+                    <div class="dropdown-item" onclick="redirectWithLoading('https://youtube.com/playlist?list=PLRq8ps5AR3vPVAJgLBdhcjHDTHokaGXzn&si=2zLNp_SfK4xZgrpO')">
+                        Embryology
+                    </div>
+                    <div class="dropdown-item" onclick="redirectWithLoading('https://youtube.com/playlist?list=PLRq8ps5AR3vMoHVNyP7sPZphCEkm6agzq&si=bdvYUzoDl40ZfsBC')">
+                        Anatomy
+                    </div>
+                    <div class="dropdown-item" onclick="redirectWithLoading('https://youtube.com/playlist?list=PLRq8ps5AR3vNWDgx484O3CAFp2ZzqAnh4&si=j9RBNxOdiKuXZWE3')">
+                        Biochemistry
+                    </div>
+                    <div class="dropdown-item" onclick="redirectWithLoading('https://youtube.com/playlist?list=PLRq8ps5AR3vNdJ8WHeHQ2PX4oR-U2njXa&si=uEBD3mSRMqJnWlJF')">
+                        Minors
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guidance -->
+            <div class="grid-item" onclick="redirectWithLoading('https://drive.google.com/drive/folders/19D4ifY-5CFVTCQkrNIOg_WZsekiURLe9')">
+                <img src="https://i.postimg.cc/L5swmtJL/IMG-20250526-WA0063.jpg" alt="Guidance">
+                <h3>Guidance</h3>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <h2>About Us</h2>
+        <p>Stop reading this and do whatever you came here to do. If you are still reading this you need to get back to studying asap. Atp have some dignity if you haven't left and get back to study</p>
+    </footer>
+
+    <script>
+        // Hide loading screen after page loads
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 100);
+        });
+
+        // Lectures dropdown functionality
+        const lecturesItem = document.getElementById('lecturesItem');
+        const lecturesDropdown = document.getElementById('lecturesDropdown');
+
+        lecturesItem.addEventListener('click', function(e) {
+            e.stopPropagation();
+            lecturesDropdown.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!lecturesItem.contains(e.target)) {
+                lecturesDropdown.classList.remove('show');
+            }
+        });
+
+        // Redirect with loading animation
+        function redirectWithLoading(url) {
+            // Show loading screen
+            document.getElementById('loadingScreen').classList.remove('hidden');
+            
+            // Redirect after 2 seconds
+            setTimeout(function() {
+                window.open(url, '_blank');
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 2000);
+        }
+
+        // Prevent dropdown items from bubbling up
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+    </script>
+</body>
+</html>
